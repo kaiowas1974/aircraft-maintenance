@@ -1,4 +1,4 @@
-version: '3.8'
+name: aircraft-maintenance
 
 services:
   db:
@@ -10,6 +10,10 @@ services:
       POSTGRES_DB: aircraft_maintenance
     ports:
       - '5432:5432'
+    networks:
+      - aircraft-net
+    volumes:
+      - aircraft-db-data:/var/lib/postgresql/data
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U user -d aircraft_maintenance']
       interval: 5s
@@ -28,4 +32,14 @@ services:
       FLYWAY_PASSWORD: password
     volumes:
       - ./sql/migrations:/flyway/sql
+    networks:
+      - aircraft-net
     command: migrate
+
+networks:
+  aircraft-net:
+    external: true
+
+volumes:
+  aircraft-db-data:
+
