@@ -97,9 +97,10 @@ CREATE TABLE bookings (
     id SERIAL PRIMARY KEY,
     aircraft_id INTEGER REFERENCES aircraft(id) ON DELETE CASCADE,
     person_id INTEGER REFERENCES people(id) ON DELETE CASCADE, -- The requester
+    maintenance_event_id INTEGER REFERENCES maintenance_events(id) ON DELETE SET NULL, -- Added to link to causing event
     start_time TIMESTAMP WITH TIME ZONE NOT NULL,
     end_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    status VARCHAR(50) CHECK (status IN ('confirmed', 'pending', 'cancelled', 'completed')),
+    status VARCHAR(50) CHECK (status IN ('confirmed', 'pending', 'cancelled', 'completed', 'maintenance_hold')), -- Added maintenance_hold
     remarks TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT valid_times CHECK (end_time > start_time)
@@ -162,3 +163,4 @@ CREATE INDEX idx_flights_aircraft ON flights(aircraft_id);
 CREATE INDEX idx_flights_pilot ON flights(pilot_id);
 CREATE INDEX idx_bookings_aircraft ON bookings(aircraft_id);
 CREATE INDEX idx_bookings_person ON bookings(person_id);
+CREATE INDEX idx_bookings_maintenance_event ON bookings(maintenance_event_id);
