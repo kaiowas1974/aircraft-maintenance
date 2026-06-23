@@ -89,6 +89,7 @@ CREATE TABLE aircraft (
     total_flight_hours NUMERIC(10, 2) DEFAULT 0,
     manufacture_date DATE,
     airworthiness_expiry DATE,
+    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'unclear', 'grounded')), -- Added for flight complaints
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -169,6 +170,17 @@ CREATE TABLE flights (
     flight_type VARCHAR(50) -- e.g., 'takeoff', 'landing', 'circuit', 'training'
 );
 
+-- NEW: Flight complaints (for reporting issues during flight)
+CREATE TABLE flight_complaints (
+    id SERIAL PRIMARY KEY,
+    flight_id INTEGER REFERENCES flights(id) ON DELETE CASCADE,
+    aircraft_id INTEGER REFERENCES aircraft(id) ON DELETE CASCADE,
+    reporter_id INTEGER REFERENCES people(id) ON DELETE SET NULL, -- Added reporter
+    description TEXT NOT NULL,
+    severity VARCHAR(20) CHECK (severity IN ('low', 'medium', 'high')),
+    reported_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- NEW: Pilot Logbook
 CREATE TABLE pilot_logbook (
     id SERIAL PRIMARY KEY,
@@ -205,3 +217,6 @@ CREATE INDEX idx_company_airports_company ON company_airports(company_id);
 CREATE INDEX idx_company_airports_airport ON company_airports(airport_id);
 CREATE INDEX idx_pilot_logbook_pilot ON pilot_logbook(pilot_id);
 CREATE INDEX idx_aircraft_logbook_aircraft ON aircraft_logbook(aircraft_id);
+CREATE INDEX idx_flight_complaints_flight ON flight_complaints(flight_id);
+CREATE INDEX idx_flight_complaints_aircraft ON flight_complaints(aircraft_id);
+CREATE INDEX idx_flight_complaints_reporter ON flight_complaints(reporter_id);
