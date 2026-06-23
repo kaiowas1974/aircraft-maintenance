@@ -92,20 +92,6 @@ CREATE TABLE aircraft (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- BOOKING SYSTEM
-CREATE TABLE bookings (
-    id SERIAL PRIMARY KEY,
-    aircraft_id INTEGER REFERENCES aircraft(id) ON DELETE CASCADE,
-    person_id INTEGER REFERENCES people(id) ON DELETE CASCADE,
-    maintenance_event_id INTEGER REFERENCES maintenance_events(id) ON DELETE SET NULL,
-    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    status VARCHAR(50) CHECK (status IN ('confirmed', 'pending', 'cancelled', 'completed', 'maintenance_hold')),
-    remarks TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT valid_times CHECK (end_time > start_time)
-);
-
 CREATE TABLE maintenance_intervals (
     id SERIAL PRIMARY KEY,
     type_id INTEGER REFERENCES aircraft_types(id) ON DELETE CASCADE,
@@ -155,6 +141,20 @@ CREATE TABLE maintenance_activities (
     notes TEXT,
     status VARCHAR(50) CHECK (status IN ('completed', 'pending', 'observation')),
     completed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- BOOKING SYSTEM
+CREATE TABLE bookings (
+    id SERIAL PRIMARY KEY,
+    aircraft_id INTEGER REFERENCES aircraft(id) ON DELETE CASCADE,
+    person_id INTEGER REFERENCES people(id) ON DELETE CASCADE,
+    maintenance_event_id INTEGER REFERENCES maintenance_events(id) ON DELETE SET NULL,
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    status VARCHAR(50) CHECK (status IN ('confirmed', 'pending', 'cancelled', 'completed', 'maintenance_hold')),
+    remarks TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT valid_times CHECK (end_time > start_time)
 );
 
 CREATE TABLE flights (
