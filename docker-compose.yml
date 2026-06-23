@@ -38,7 +38,7 @@ services:
 
 networks:
   aircraft-net:
-    external: true
+    driver: bridge
 
 volumes:
   aircraft-db-data:
