@@ -1,4 +1,4 @@
--- Initial Schema for Aircraft Maintenance
+-- Initial Schema for Aircraft Maintenance & Flight Operations
 -- Database: PostgreSQL
 
 CREATE TABLE airports (
@@ -7,6 +7,22 @@ CREATE TABLE airports (
     iata VARCHAR(3) UNIQUE,
     name VARCHAR(100) NOT NULL,
     city VARCHAR(100)
+);
+
+CREATE TABLE runways (
+    id SERIAL PRIMARY KEY,
+    airport_id INTEGER REFERENCES airports(id) ON DELETE CASCADE,
+    designator VARCHAR(10) NOT NULL, -- e.g., '26R'
+    length_meters INTEGER,
+    surface VARCHAR(50),
+    UNIQUE(airport_id, designator)
+);
+
+CREATE TABLE hangars (
+    id SERIAL PRIMARY KEY,
+    airport_id INTEGER REFERENCES airports(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    capacity INTEGER
 );
 
 CREATE TABLE atc_authorities (
@@ -45,6 +61,7 @@ CREATE TABLE aircraft (
     registration VARCHAR(20) UNIQUE NOT NULL,
     type_id INTEGER REFERENCES aircraft_types(id) ON DELETE CASCADE,
     home_airport_id INTEGER REFERENCES airports(id) ON DELETE SET NULL,
+    current_hangar_id INTEGER REFERENCES hangars(id) ON DELETE SET NULL,
     total_flight_hours NUMERIC(10, 2) DEFAULT 0,
     manufacture_date DATE,
     airworthiness_expiry DATE,
@@ -87,8 +104,21 @@ CREATE TABLE maintenance_activities (
     completed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE flights (
+    id SERIAL PRIMARY KEY,
+    aircraft_id INTEGER REFERENCES aircraft(id) ON DELETE CASCADE,
+    pilot_id INTEGER REFERENCES people(id) ON DELETE SET NULL,
+    runway_id INTEGER REFERENCES runways(id) ON DELETE SET NULL,
+    flight_number VARCHAR(20),
+    departure_time TIMESTAMP WITH TIME ZONE,
+    arrival_time TIMESTAMP WITH TIME ZONE,
+    flight_type VARCHAR(50) -- e.g., 'takeoff', 'landing', 'circuit'
+);
+
 -- Indexes for performance
 CREATE INDEX idx_aircraft_registration ON aircraft(registration);
 CREATE INDEX idx_maintenance_events_aircraft ON maintenance_events(aircraft_id);
 CREATE INDEX idx_maintenance_activities_event ON maintenance_activities(event_id);
 CREATE INDEX idx_airports_icao ON airports(icao);
+CREATE INDEX idx_flights_aircraft ON flights(aircraft_id);
+CREATE INDEX idx_flights_pilot ON flights(pilot_id);
