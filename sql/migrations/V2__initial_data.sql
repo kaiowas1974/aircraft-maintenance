@@ -76,11 +76,11 @@ INSERT INTO hangar_type_limits (hangar_id, type_id, max_quantity) VALUES
 (3, 1, 1);
 
 -- 12. Aircraft
-INSERT INTO aircraft (registration, type_id, home_airport_id, current_hangar_id, total_flight_hours, manufacture_date, airworthiness_expiry) VALUES 
-('OE-DABC', 1, 1, 1, 450.2, '2020-06-15', '2027-06-15'),
-('OE-DAEF', 2, 2, 3, 1120.8, '2018-03-10', '2026-12-31'),
-('OE-SXYZ', 3, 3, NULL, 2500.5, '2010-11-20', '2027-01-10'),
-('OE-R123', 4, 4, NULL, 840.0, '2015-08-05', '2026-09-20');
+INSERT INTO aircraft (registration, type_id, home_airport_id, current_hangar_id, total_flight_hours, manufacture_date, airworthiness_expiry, status) VALUES 
+('OE-DABC', 1, 1, 1, 450.2, '2020-06-15', '2027-06-15', 'unclear'), 
+('OE-DAEF', 2, 2, 3, 1120.8, '2018-03-10', '2026-12-31', 'active'),
+('OE-SXYZ', 3, 3, NULL, 2500.5, '2010-11-20', '2027-01-10', 'active'),
+('OE-R123', 4, 4, NULL, 840.0, '2015-08-05', '2026-09-20', 'active');
 
 -- 13. Maintenance Companies
 INSERT INTO maintenance_companies (name, description) VALUES 
@@ -120,7 +120,7 @@ INSERT INTO bookings (aircraft_id, person_id, start_time, end_time, status, rema
 (1, 5, '2026-07-01 09:00:00', '2026-07-01 11:00:00', 'confirmed', 'Training flight for Lukas'),
 (2, 3, '2026-07-05 14:00:00', '2026-07-05 16:00:00', 'confirmed', 'Leisure flight');
 
--- 20. Flights (linked to bookings)
+-- 20. Flights (linked to bookings, now including logbook data)
 INSERT INTO flights (booking_id, aircraft_id, pilot_id, runway_id, flight_number, departure_time, arrival_time, flight_type) VALUES 
 (1, 1, 3, 1, 'TRAIN-001', '2026-07-01 09:00:00', '2026-07-01 09:45:00', 'training'),
 (2, 2, 3, 2, 'LEISURE-01', '2026-07-05 14:00:00', '2026-07-05 15:30:00', 'circuit');
@@ -134,3 +134,7 @@ INSERT INTO pilot_logbook (pilot_id, flight_id, flight_date, duration_minutes, c
 INSERT INTO aircraft_logbook (aircraft_id, flight_id, flight_date, duration_minutes, cumulative_hours, remarks) VALUES 
 (1, 1, '2026-07-01', 45, 450.7, 'Routine check done'),
 (2, 2, '2026-07-05', 90, 1121.3, 'Normal operation');
+
+-- 23. Flight Complaints (NEW)
+INSERT INTO flight_complaints (flight_id, aircraft_id, reporter_id, description, severity, reported_at) VALUES 
+(1, 1, 3, 'Schubhebel ist schwergängig', 'medium', '2026-07-01 09:30:00');
