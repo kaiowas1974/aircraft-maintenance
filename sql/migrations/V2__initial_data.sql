@@ -82,16 +82,16 @@ INSERT INTO aircraft (registration, type_id, home_airport_id, current_hangar_id,
 ('OE-SXYZ', 3, 3, NULL, 2500.5, '2010-11-20', '2027-01-10'),
 ('OE-R123', 4, 4, NULL, 840.0, '2015-08-05', '2026-09-20');
 
--- 13. Maintenance Companies (NEW)
+-- 13. Maintenance Companies
 INSERT INTO maintenance_companies (name, description) VALUES 
 ('Austrian Aero Services', 'Major maintenance provider in Vienna'),
 ('Alpine Maintenance GmbH', 'Specialized in mountain region operations');
 
--- 14. Company-Airport links (NEW)
+-- 14. Company-Airport links
 INSERT INTO company_airports (company_id, airport_id) VALUES 
-(1, 1), -- Austrian Aero Services @ LOWW
-(1, 3), -- Austrian Aero Services @ LOWL
-(2, 2); -- Alpine Maintenance @ LOWI
+(1, 1), 
+(1, 3), 
+(2, 2);
 
 -- 15. Maintenance Intervals
 INSERT INTO maintenance_intervals (type_id, name, interval_hours, interval_days, description) VALUES 
@@ -106,7 +106,7 @@ INSERT INTO maintenance_tasks (interval_id, description) VALUES
 (2, 'Full airframe inspection'),
 (3, 'Oil change');
 
--- 17. Maintenance Events (Updated with company_id)
+-- 17. Maintenance Events
 INSERT INTO maintenance_events (aircraft_id, airport_id, company_id, technician_id, date, hours_at_maintenance, notes) VALUES 
 (1, 1, 1, 2, '2026-06-01', 450.2, 'Routine maintenance at LOWW by Austrian Aero Services');
 
@@ -124,3 +124,13 @@ INSERT INTO bookings (aircraft_id, person_id, start_time, end_time, status, rema
 INSERT INTO flights (booking_id, aircraft_id, pilot_id, runway_id, flight_number, departure_time, arrival_time, flight_type) VALUES 
 (1, 1, 3, 1, 'TRAIN-001', '2026-07-01 09:00:00', '2026-07-01 09:45:00', 'training'),
 (2, 2, 3, 2, 'LEISURE-01', '2026-07-05 14:00:00', '2026-07-05 15:30:00', 'circuit');
+
+-- 21. Pilot Logbook entries
+INSERT INTO pilot_logbook (pilot_id, flight_id, flight_date, duration_minutes, cumulative_hours, remarks) VALUES 
+(3, 1, '2026-07-01', 45, 1250.7, 'Smooth training flight'),
+(3, 2, '2026-07-05', 90, 1251.2, 'Nice circuit practice');
+
+-- 22. Aircraft Logbook entries
+INSERT INTO aircraft_logbook (aircraft_id, flight_id, flight_date, duration_minutes, cumulative_hours, remarks) VALUES 
+(1, 1, '2026-07-01', 45, 450.7, 'Routine check done'),
+(2, 2, '2026-07-05', 90, 1121.3, 'Normal operation');

@@ -96,11 +96,11 @@ CREATE TABLE aircraft (
 CREATE TABLE bookings (
     id SERIAL PRIMARY KEY,
     aircraft_id INTEGER REFERENCES aircraft(id) ON DELETE CASCADE,
-    person_id INTEGER REFERENCES people(id) ON DELETE CASCADE, -- The requester
-    maintenance_event_id INTEGER REFERENCES maintenance_events(id) ON DELETE SET NULL, -- Added to link to causing event
+    person_id INTEGER REFERENCES people(id) ON DELETE CASCADE,
+    maintenance_event_id INTEGER REFERENCES maintenance_events(id) ON DELETE SET NULL,
     start_time TIMESTAMP WITH TIME ZONE NOT NULL,
     end_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    status VARCHAR(50) CHECK (status IN ('confirmed', 'pending', 'cancelled', 'completed', 'maintenance_hold')), -- Added maintenance_hold
+    status VARCHAR(50) CHECK (status IN ('confirmed', 'pending', 'cancelled', 'completed', 'maintenance_hold')),
     remarks TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT valid_times CHECK (end_time > start_time)
@@ -140,7 +140,7 @@ CREATE TABLE maintenance_events (
     id SERIAL PRIMARY KEY,
     aircraft_id INTEGER REFERENCES aircraft(id) ON DELETE CASCADE,
     airport_id INTEGER REFERENCES airports(id) ON DELETE SET NULL,
-    company_id INTEGER REFERENCES maintenance_companies(id) ON DELETE SET NULL, -- Added link to company
+    company_id INTEGER REFERENCES maintenance_companies(id) ON DELETE SET NULL,
     technician_id INTEGER REFERENCES people(id) ON DELETE SET NULL,
     date DATE NOT NULL,
     hours_at_maintenance NUMERIC(10, 2) NOT NULL,
@@ -169,6 +169,28 @@ CREATE TABLE flights (
     flight_type VARCHAR(50) -- e.g., 'takeoff', 'landing', 'circuit', 'training'
 );
 
+-- NEW: Pilot Logbook
+CREATE TABLE pilot_logbook (
+    id SERIAL PRIMARY KEY,
+    pilot_id INTEGER REFERENCES people(id) ON DELETE CASCADE,
+    flight_id INTEGER REFERENCES flights(id) ON DELETE CASCADE,
+    flight_date DATE NOT NULL,
+    duration_minutes INTEGER NOT NULL,
+    cumulative_hours NUMERIC(10, 2) NOT NULL,
+    remarks TEXT
+);
+
+-- NEW: Aircraft Logbook
+CREATE TABLE aircraft_logbook (
+    id SERIAL PRIMARY KEY,
+    aircraft_id INTEGER REFERENCES aircraft(id) ON DELETE CASCADE,
+    flight_id INTEGER REFERENCES flights(id) ON DELETE CASCADE,
+    flight_date DATE NOT NULL,
+    duration_minutes INTEGER NOT NULL,
+    cumulative_hours NUMERIC(10, 2) NOT NULL,
+    remarks TEXT
+);
+
 -- Indexes for performance
 CREATE INDEX idx_aircraft_registration ON aircraft(registration);
 CREATE INDEX idx_maintenance_events_aircraft ON maintenance_events(aircraft_id);
@@ -181,3 +203,5 @@ CREATE INDEX idx_bookings_person ON bookings(person_id);
 CREATE INDEX idx_bookings_maintenance_event ON bookings(maintenance_event_id);
 CREATE INDEX idx_company_airports_company ON company_airports(company_id);
 CREATE INDEX idx_company_airports_airport ON company_airports(airport_id);
+CREATE INDEX idx_pilot_logbook_pilot ON pilot_logbook(pilot_id);
+CREATE INDEX idx_aircraft_logbook_aircraft ON aircraft_logbook(aircraft_id);
