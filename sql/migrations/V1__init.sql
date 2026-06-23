@@ -122,10 +122,25 @@ CREATE TABLE maintenance_tasks (
     is_mandatory BOOLEAN DEFAULT TRUE
 );
 
+-- NEW: Maintenance Companies
+CREATE TABLE maintenance_companies (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+-- NEW: Junction Table for Companies and Airports
+CREATE TABLE company_airports (
+    company_id INTEGER REFERENCES maintenance_companies(id) ON DELETE CASCADE,
+    airport_id INTEGER REFERENCES airports(id) ON DELETE CASCADE,
+    PRIMARY KEY (company_id, airport_id)
+);
+
 CREATE TABLE maintenance_events (
     id SERIAL PRIMARY KEY,
     aircraft_id INTEGER REFERENCES aircraft(id) ON DELETE CASCADE,
     airport_id INTEGER REFERENCES airports(id) ON DELETE SET NULL,
+    company_id INTEGER REFERENCES maintenance_companies(id) ON DELETE SET NULL, -- Added link to company
     technician_id INTEGER REFERENCES people(id) ON DELETE SET NULL,
     date DATE NOT NULL,
     hours_at_maintenance NUMERIC(10, 2) NOT NULL,
@@ -164,3 +179,5 @@ CREATE INDEX idx_flights_pilot ON flights(pilot_id);
 CREATE INDEX idx_bookings_aircraft ON bookings(aircraft_id);
 CREATE INDEX idx_bookings_person ON bookings(person_id);
 CREATE INDEX idx_bookings_maintenance_event ON bookings(maintenance_event_id);
+CREATE INDEX idx_company_airports_company ON company_airports(company_id);
+CREATE INDEX idx_company_airports_airport ON company_airports(airport_id);
