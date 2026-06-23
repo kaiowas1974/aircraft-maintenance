@@ -50,6 +50,23 @@ CREATE TABLE person_roles (
     PRIMARY KEY (person_id, role_id)
 );
 
+-- LICENSING SYSTEM
+CREATE TABLE licenses (
+    id SERIAL PRIMARY KEY,
+    license_type VARCHAR(50) UNIQUE NOT NULL, -- e.g., 'PPL', 'CPL', 'LAPL'
+    description TEXT
+);
+
+CREATE TABLE person_licenses (
+    id SERIAL PRIMARY KEY,
+    person_id INTEGER REFERENCES people(id) ON DELETE CASCADE,
+    license_id INTEGER REFERENCES licenses(id) ON DELETE CASCADE,
+    issue_date DATE NOT NULL,
+    expiry_date DATE NOT NULL,
+    rating VARCHAR(100), -- e.g., 'Single Engine Land'
+    issuing_authority_id INTEGER REFERENCES atc_authorities(id)
+);
+
 CREATE TABLE aircraft_types (
     id SERIAL PRIMARY KEY,
     manufacturer VARCHAR(100) NOT NULL,
@@ -66,6 +83,19 @@ CREATE TABLE aircraft (
     manufacture_date DATE,
     airworthiness_expiry DATE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- BOOKING SYSTEM
+CREATE TABLE bookings (
+    id SERIAL PRIMARY KEY,
+    aircraft_id INTEGER REFERENCES aircraft(id) ON DELETE CASCADE,
+    person_id INTEGER REFERENCES people(id) ON DELETE CASCADE, -- The requester
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    status VARCHAR(50) CHECK (status IN ('confirmed', 'pending', 'cancelled', 'completed')),
+    remarks TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT valid_times CHECK (end_time > start_time)
 );
 
 CREATE TABLE maintenance_intervals (
@@ -106,13 +136,14 @@ CREATE TABLE maintenance_activities (
 
 CREATE TABLE flights (
     id SERIAL PRIMARY KEY,
+    booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL,
     aircraft_id INTEGER REFERENCES aircraft(id) ON DELETE CASCADE,
     pilot_id INTEGER REFERENCES people(id) ON DELETE SET NULL,
     runway_id INTEGER REFERENCES runways(id) ON DELETE SET NULL,
     flight_number VARCHAR(20),
     departure_time TIMESTAMP WITH TIME ZONE,
     arrival_time TIMESTAMP WITH TIME ZONE,
-    flight_type VARCHAR(50) -- e.g., 'takeoff', 'landing', 'circuit'
+    flight_type VARCHAR(50) -- e.g., 'takeoff', 'landing', 'circuit', 'training'
 );
 
 -- Indexes for performance
@@ -122,3 +153,5 @@ CREATE INDEX idx_maintenance_activities_event ON maintenance_activities(event_id
 CREATE INDEX idx_airports_icao ON airports(icao);
 CREATE INDEX idx_flights_aircraft ON flights(aircraft_id);
 CREATE INDEX idx_flights_pilot ON flights(pilot_id);
+CREATE INDEX idx_bookings_aircraft ON bookings(aircraft_id);
+CREATE INDEX idx_bookings_person ON bookings(person_id);
