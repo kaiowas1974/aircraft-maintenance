@@ -73,6 +73,13 @@ CREATE TABLE aircraft_types (
     model VARCHAR(100) NOT NULL
 );
 
+CREATE TABLE hangar_type_limits (
+    hangar_id INTEGER REFERENCES hangars(id) ON DELETE CASCADE,
+    type_id INTEGER REFERENCES aircraft_types(id) ON DELETE CASCADE,
+    max_quantity INTEGER NOT NULL,
+    PRIMARY KEY (hangar_id, type_id)
+);
+
 CREATE TABLE aircraft (
     id SERIAL PRIMARY KEY,
     registration VARCHAR(20) UNIQUE NOT NULL,
