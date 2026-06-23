@@ -13,6 +13,7 @@ CREATE TABLE aircraft (
     type_id INTEGER REFERENCES aircraft_types(id) ON DELETE CASCADE,
     total_flight_hours NUMERIC(10, 2) DEFAULT 0,
     manufacture_date DATE,
+    airworthiness_expiry DATE, -- Added for Austrian/EASA regulatory compliance
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
