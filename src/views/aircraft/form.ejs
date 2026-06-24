@@ -1,0 +1,62 @@
+<%- include('../header') %>
+<h1><%= aircraft ? 'Edit' : 'New' %> Aircraft</h1>
+
+<form action="/aircraft<%= aircraft ? '/' + aircraft.id : '' %>" method="POST">
+    <div class="mb-3">
+        <label for="registration" class="form-label">Registration</label>
+        <input type="text" class="form-control" id="registration" name="registration" value="<%= aircraft ? aircraft.registration : '' %>" required>
+    </div>
+    <div class="mb-3">
+        <label for="type_id" class="form-label">Aircraft Type</label>
+        <select class="form-select" id="type_id" name="type_id" required>
+            <option value="">Select a type</option>
+            <% aircraftTypes.forEach(type => { %>
+                <option value="<%= type.id %>" <%= aircraft && aircraft.type_id === type.id ? 'selected' : '' %>>
+                    <%= type.manufacturer %> <%= type.model %>
+                </option>
+            <% }) %>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="home_airport_id" class="form-label">Home Airport</label>
+        <select class="form-select" id="home_airport_id" name="home_airport_id">
+            <option value="">None</option>
+            <% airports.forEach(airport => { %>
+                <option value="<%= airport.id %>" <%= aircraft && aircraft.home_airport_id === airport.id ? 'selected' : '' %>>
+                    <%= airport.name %> (<%= airport.icao %>)
+                </option>
+            <% }) %>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="current_hangar_id" class="form-label">Current Hangar</label>
+        <select class="form-select" id="current_hangar_id" name="current_hangar_id">
+            <option value="">None</option>
+            <% hangars.forEach(hangar => { %>
+                <option value="<%= hangar.id %>" <%= aircraft && aircraft.current_hangar_id === hangar.id ? 'selected' : '' %>>
+                    <%= hangar.name %>
+                </option>
+            <% }) %>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="total_flight_hours" class="form-label">Total Flight Hours</label>
+        <input type="number" step="0.01" class="form-control" id="total_flight_hours" name="total_flight_hours" value="<%= aircraft ? aircraft.total_flight_hours : '0' %>">
+    </div>
+    <div class="mb-3">
+        <label for="manufacture_date" class="form-label">Manufacture Date</label>
+        <input type="date" class="form-control" id="manufacture_date" name="manufacture_date" value="<%= aircraft && aircraft.manufacture_date ? aircraft.manufacture_date.toISOString().split('T')[0] : '' %>">
+    </div>
+    <div class="mb-3">
+        <label for="airworthiness_expiry" class="form-label">Airworthiness Expiry</label>
+        <input type="date" class="form-control" id="airworthiness_expiry" name="airworthiness_expiry" value="<%= aircraft && aircraft.airworthiness_expiry ? aircraft.airworthiness_expiry.toISOString().split('T')[0] : '' %>">
+    </div>
+    <div class="mb-3">
+        <label for="status" class="form-label">Status</label>
+        <input type="text" class="form-control" id="status" name="status" value="<%= aircraft ? aircraft.status : 'active' %>">
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="/aircraft" class="btn btn-secondary">Cancel</a>
+</form>
+
+<%- include('../footer') %>

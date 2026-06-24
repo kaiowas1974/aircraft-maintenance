@@ -1,0 +1,17 @@
+<%- include('../header') %>
+<h1><%= aircraftType ? 'Edit' : 'New' %> Aircraft Type</h1>
+
+<form action="/aircraft-types<%= aircraftType ? '/' + aircraftType.id : '' %>" method="POST">
+    <div class="mb-3">
+        <label for="manufacturer" class="form-label">Manufacturer</label>
+        <input type="text" class="form-control" id="manufacturer" name="manufacturer" value="<%= aircraftType ? aircraftType.manufacturer : '' %>" required>
+    </div>
+    <div class="mb-3">
+        <label for="model" class="form-label">Model</label>
+        <input type="text" class="form-control" id="model" name="model" value="<%= aircraftType ? aircraftType.model : '' %>" required>
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="/aircraft-types" class="btn btn-secondary">Cancel</a>
+</form>
+
+<%- include('../footer') %>

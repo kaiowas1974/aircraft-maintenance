@@ -1,0 +1,25 @@
+<%- include('../header') %>
+<h1><%= airport ? 'Edit' : 'New' %> Airport</h1>
+
+<form action="/airports<%= airport ? '/' + airport.id : '' %>" method="POST">
+    <div class="mb-3">
+        <label for="icao" class="form-label">ICAO</label>
+        <input type="text" class="form-control" id="icao" name="icao" value="<%= airport ? airport.icao : '' %>" required>
+    </div>
+    <div class="mb-3">
+        <label for="iata" class="form-label">IATA</label>
+        <input type="text" class="form-control" id="iata" name="iata" value="<%= airport ? airport.iata : '' %>">
+    </div>
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="<%= airport ? airport.name : '' %>" required>
+    </div>
+    <div class="mb-3">
+        <label for="city" class="form-label">City</label>
+        <input type="text" class="form-control" id="city" name="city" value="<%= airport ? airport.city : '' %>">
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="/airports" class="btn btn-secondary">Cancel</a>
+</form>
+
+<%- include('../footer') %>

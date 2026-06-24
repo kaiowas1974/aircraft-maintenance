@@ -1,0 +1,25 @@
+<%- include('../header') %>
+<h1><%= person ? 'Edit' : 'New' %> Person</h1>
+
+<form action="/people<%= person ? '/' + person.id : '' %>" method="POST">
+    <div class="mb-3">
+        <label for="first_name" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="first_name" name="first_name" value="<%= person ? person.first_name : '' %>" required>
+    </div>
+    <div class="mb-3">
+        <label for="last_name" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="last_name" name="last_name" value="<%= person ? person.last_name : '' %>" required>
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" value="<%= person ? person.email : '' %>">
+    </div>
+    <div class="mb-3">
+        <label for="license_number" class="form-label">License Number</label>
+        <input type="text" class="form-control" id="license_number" name="license_number" value="<%= person ? person.license_number : '' %>">
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="/people" class="btn btn-secondary">Cancel</a>
+</form>
+
+<%- include('../footer') %>
