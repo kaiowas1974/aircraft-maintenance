@@ -266,34 +266,89 @@ export const peopleList = async (req: Request, res: Response) => {
 };
 
 export const peopleNew = async (req: Request, res: Response) => {
-  res.render('people/form', { person: null });
+  const roles = await prisma.role.findMany();
+  const licenses = await prisma.license.findMany();
+  res.render('people/form', { person: null, roles, licenses });
 };
 
 export const peopleEdit = async (req: Request, res: Response) => {
   const { id } = req.params;
   const person = await prisma.person.findUnique({
     where: { id: Number(id) },
+    include: {
+      person_roles: {
+        select: { role_id: true }
+      },
+      person_licenses: {
+        select: { license_id: true }
+      }
+    }
   });
   if (!person) {
     return res.status(404).send('Person not found');
   }
-  res.render('people/form', { person });
+  const roles = await prisma.role.findMany();
+  const licenses = await prisma.license.findMany();
+  
+  // Transform the relation data for the view
+  const selectedRoleIds = person.person_roles.map(pr => pr.role_id);
+  const selectedLicenseIds = person.person_licenses.map(pl => pl.license_id);
+
+  res.render('people/form', { 
+    person, 
+    roles, 
+    licenses, 
+    selectedRoleIds,
+    selectedLicenseIds
+  });
 };
 
 export const peopleCreate = async (req: Request, res: Response) => {
-  const { first_name, last_name, email, license_number } = req.body;
+  const { first_name, last_name, email, license_number, role_ids, license_ids } = req.body;
+  
+  const role_ids_nums = role_ids ? (Array.isArray(role_ids) ? role_ids.map(Number) : [Number(role_ids)]) : [];
+  const license_ids_nums = license_ids ? (Array.isArray(license_ids) ? license_ids.map(Number) : [Number(license_ids)]) : [];
+  
   await prisma.person.create({
-    data: { first_name, last_name, email, license_number },
+    data: { 
+      first_name, 
+      last_name, 
+      email, 
+      license_number,
+      person_roles: {
+        create: role_ids_nums.map(rid => ({ role_id: rid }))
+      },
+      person_licenses: {
+        create: license_ids_nums.map(lid => ({ license_id: lid, issue_date: new Date() }))
+      }
+    },
   });
   res.redirect('/people');
 };
 
 export const peopleUpdate = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { first_name, last_name, email, license_number } = req.body;
+  const { first_name, last_name, email, license_number, role_ids, license_ids } = req.body;
+  
+  const role_ids_nums = role_ids ? (Array.isArray(role_ids) ? role_ids.map(Number) : [Number(role_ids)]) : [];
+  const license_ids_nums = license_ids ? (Array.isArray(license_ids) ? license_ids.map(Number) : [Number(license_ids)]) : [];
+
   await prisma.person.update({
     where: { id: Number(id) },
-    data: { first_name, last_name, email, license_number },
+    data: { 
+      first_name, 
+      last_name, 
+      email, 
+      license_number,
+      person_roles: {
+        deleteMany: {},
+        create: role_ids_nums.map(rid => ({ role_id: rid }))
+      },
+      person_licenses: {
+        deleteMany: {},
+        create: license_ids_nums.map(lid => ({ license_id: lid, issue_date: new Date() }))
+      }
+    },
   });
   res.redirect('/people');
 };

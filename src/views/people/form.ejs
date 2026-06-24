@@ -18,6 +18,19 @@
         <label for="license_number" class="form-label">License Number</label>
         <input type="text" class="form-control" id="license_number" name="license_number" value="<%= person ? person.license_number : '' %>">
     </div>
+
+    <div class="mb-3">
+        <label for="roles" class="form-label">Roles</label>
+        <select class="form-select" id="roles" name="role_ids" multiple>
+            <% roles.forEach(role => { %>
+                <option value="<%= role.id %>" <%= (typeof selectedRoleIds !== 'undefined' && selectedRoleIds.includes(role.id)) ? 'selected' : '' %>>
+                    <%= role.role_name %>
+                </option>
+            <% }) %>
+        </select>
+        <small class="text-muted">Hold Ctrl (Cmd) to select multiple.</small>
+    </div>
+
     <button type="submit" class="btn btn-success">Save</button>
     <a href="/people" class="btn btn-secondary">Cancel</a>
 </form>

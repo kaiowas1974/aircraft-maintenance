@@ -1,0 +1,17 @@
+<%- include('../header') %>
+<h1><%= license ? 'Edit' : 'New' %> License</h1>
+
+<form action="/licenses<%= license ? '/' + license.id : '' %>" method="POST">
+    <div class="mb-3">
+        <label for="license_type" class="form-label">License Type</label>
+        <input type="text" class="form-control" id="license_type" name="license_type" value="<%= license ? license.license_type : '' %>" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description"><%= license ? license.description : '' %></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="/licenses" class="btn btn-secondary">Cancel</a>
+</form>
+
+<%- include('../footer') %>

@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import * as uiControllers from '../controllers/uiControllers';
+import licenseUiRoutes from './licenseUiRoutes';
+import roleUiRoutes from './roleUiRoutes';
 
 const router = Router();
 
@@ -44,5 +46,11 @@ router.get('/people/:id/edit', uiControllers.peopleEdit);
 router.post('/people', uiControllers.peopleCreate);
 router.post('/people/:id', uiControllers.peopleUpdate);
 router.post('/people/:id/delete', uiControllers.peopleDelete);
+
+// Licenses
+router.use('/licenses', licenseUiRoutes);
+
+// Roles
+router.use('/roles', roleUiRoutes);
 
 export default router;
