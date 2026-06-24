@@ -31,6 +31,18 @@
         <small class="text-muted">Hold Ctrl (Cmd) to select multiple.</small>
     </div>
 
+    <div class="mb-3">
+        <label for="licenses" class="form-label">Licenses</label>
+        <select class="form-select" id="licenses" name="license_ids" multiple>
+            <% licenses.forEach(license => { %>
+                <option value="<%= license.id %>" <%= (typeof selectedLicenseIds !== 'undefined' && selectedLicenseIds.includes(license.id)) ? 'selected' : '' %>>
+                    <%= license.license_type %>
+                </option>
+            <% }) %>
+        </select>
+        <small class="text-muted">Hold Ctrl (Cmd) to select multiple.</small>
+    </div>
+
     <button type="submit" class="btn btn-success">Save</button>
     <a href="/people" class="btn btn-secondary">Cancel</a>
 </form>
