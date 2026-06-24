@@ -1,0 +1,27 @@
+{
+  "name": "aircraft-maintenance",
+  "version": "1.0.0",
+  "description": "This repository contains the database schema and initial seed data for managing the maintenance of light aircraft.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaiowas1974/aircraft-maintenance.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kaiowas1974/aircraft-maintenance/issues"
+  },
+  "homepage": "https://github.com/kaiowas1974/aircraft-maintenance#readme",
+  "dependencies": {
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1"
+  }
+}
