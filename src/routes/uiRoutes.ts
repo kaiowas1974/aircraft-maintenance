@@ -2,6 +2,8 @@ import { Router } from 'express';
 import * as uiControllers from '../controllers/uiControllers';
 import licenseUiRoutes from './licenseUiRoutes';
 import roleUiRoutes from './roleUiRoutes';
+import atcAuthorityUiRoutes from './atcAuthorityUiRoutes';
+import runwayUiRoutes from './runwayUiRoutes';
 
 const router = Router();
 
@@ -52,5 +54,11 @@ router.use('/licenses', licenseUiRoutes);
 
 // Roles
 router.use('/roles', roleUiRoutes);
+
+// ATC Authorities
+router.use('/atc-authorities', atcAuthorityUiRoutes);
+
+// Runways
+router.use('/runways', runwayUiRoutes);
 
 export default router;

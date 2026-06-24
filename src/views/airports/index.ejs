@@ -11,6 +11,7 @@
             <th>IATA</th>
             <th>Name</th>
             <th>City</th>
+            <th>Runways</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -21,12 +22,19 @@
             <td><%= airport.iata %></td>
             <td><%= airport.name %></td>
             <td><%= airport.city %></td>
-                <td class="d-flex gap-2">
-                    <a href="/airports/<%= airport.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
-                    <form action="/airports/<%= airport.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
-                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                    </form>
-                </td>
+            <td>
+                <ul class="list-unstyled mb-0">
+                    <% airport.runways.forEach(runway => { %>
+                        <li><%= runway.designator %> (<%= runway.length_meters %>m)</li>
+                    <% }) %>
+                </ul>
+            </td>
+            <td class="d-flex gap-2">
+                <a href="/airports/<%= airport.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
+                <form action="/airports/<%= airport.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
         </tr>
         <% }) %>
     </tbody>

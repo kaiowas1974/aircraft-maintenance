@@ -1,0 +1,36 @@
+<%- include('../header') %>
+<h1>Runways</h1>
+
+<div class="mb-3">
+    <a href="/runways/new" class="btn btn-success">New Runway</a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Airport</th>
+            <th>Designator</th>
+            <th>Length (m)</th>
+            <th>Surface</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% runways.forEach(runway => { %>
+            <tr>
+                <td><%= runway.airport.name %> (<%= runway.airport.icao %>)</td>
+                <td><%= runway.designator %></td>
+                <td><%= runway.length_meters || '' %></td>
+                <td><%= runway.surface || '' %></td>
+                <td>
+                    <a href="/runways/<%= runway.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="/runways/<%= runway.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<%- include('../footer') %>

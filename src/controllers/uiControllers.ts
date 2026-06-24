@@ -7,39 +7,73 @@ export const home = async (req: Request, res: Response) => {
 
 // Airports
 export const airportsList = async (req: Request, res: Response) => {
-  const airports = await prisma.airport.findMany();
+  const airports = await prisma.airport.findMany({
+    include: { runways: true }
+  });
   res.render('airports/index', { airports });
 };
 
 export const airportsNew = async (req: Request, res: Response) => {
-  res.render('airports/form', { airport: null });
+  res.render('airports/form', { airport: null, runways: [] });
 };
 
 export const airportsEdit = async (req: Request, res: Response) => {
   const { id } = req.params;
   const airport = await prisma.airport.findUnique({
     where: { id: Number(id) },
+    include: { runways: true }
   });
   if (!airport) {
     return res.status(404).send('Airport not found');
   }
-  res.render('airports/form', { airport });
+  res.render('airports/form', { airport, runways: airport.runways });
 };
 
 export const airportsCreate = async (req: Request, res: Response) => {
-  const { icao, iata, name, city } = req.body;
+  const { icao, iata, name, city, runways } = req.body;
+  
+  const runwayData = runways ? (Array.isArray(runways) ? runways : [runways]).map((r: any) => ({
+    designator: r.designator,
+    length_meters: r.length_meters ? Number(r.length_meters) : null,
+    surface: r.surface,
+  })) : [];
+
   await prisma.airport.create({
-    data: { icao, iata, name, city },
+    data: { 
+      icao, 
+      iata, 
+      name, 
+      city,
+      runways: {
+        create: runwayData
+      }
+    },
   });
   res.redirect('/airports');
 };
 
 export const airportsUpdate = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { icao, iata, name, city } = req.body;
+  const { icao, iata, name, city, runways } = req.body;
+  
+  const runwayData = runways ? (Array.isArray(runways) ? runways : [runways]).map((r: any) => ({
+    designator: r.designator,
+    length_meters: r.length_meters ? Number(r.length_meters) : null,
+    surface: r.surface,
+  })) : [];
+
   await prisma.airport.update({
     where: { id: Number(id) },
-    data: { icao, iata, name, city },
+    data: { 
+      icao, 
+      iata, 
+      name, 
+      city,
+      runways: {
+        deleteMany: {},
+        create: runwayData
+      }
+    },
   });
   res.redirect('/airports');
 };

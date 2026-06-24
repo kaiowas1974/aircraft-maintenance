@@ -1,0 +1,32 @@
+<%- include('../header') %>
+<h1>ATC Authorities</h1>
+
+<div class="mb-3">
+    <a href="/atc-authorities/new" class="btn btn-success">New ATC Authority</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% authorities.forEach(authority => { %>
+            <tr>
+                <td><%= authority.name %></td>
+                <td><%= authority.description || '' %></td>
+                <td>
+                    <a href="/atc-authorities/<%= authority.id %>/edit" class="btn btn-primary btn-sm">Edit</a>
+                    <form action="/atc-authorities/<%= authority.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?')">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<%- include('../footer') %>
