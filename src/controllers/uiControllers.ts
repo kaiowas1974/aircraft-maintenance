@@ -309,6 +309,10 @@ export const peopleCreate = async (req: Request, res: Response) => {
   const role_ids_nums = role_ids ? (Array.isArray(role_ids) ? role_ids.map(Number) : [Number(role_ids)]) : [];
   const license_ids_nums = license_ids ? (Array.isArray(license_ids) ? license_ids.map(Number) : [Number(license_ids)]) : [];
   
+  const issueDate = new Date();
+  const expiryDate = new Date();
+  expiryDate.setFullYear(issueDate.getFullYear() + 1);
+
   await prisma.person.create({
     data: { 
       first_name, 
@@ -319,7 +323,11 @@ export const peopleCreate = async (req: Request, res: Response) => {
         create: role_ids_nums.map(rid => ({ role_id: rid }))
       },
       person_licenses: {
-        create: license_ids_nums.map(lid => ({ license_id: lid, issue_date: new Date() }))
+        create: license_ids_nums.map(lid => ({ 
+          license: { connect: { id: lid } },
+          issue_date: issueDate,
+          expiry_date: expiryDate
+        }))
       }
     },
   });
@@ -332,6 +340,10 @@ export const peopleUpdate = async (req: Request, res: Response) => {
   
   const role_ids_nums = role_ids ? (Array.isArray(role_ids) ? role_ids.map(Number) : [Number(role_ids)]) : [];
   const license_ids_nums = license_ids ? (Array.isArray(license_ids) ? license_ids.map(Number) : [Number(license_ids)]) : [];
+
+  const issueDate = new Date();
+  const expiryDate = new Date();
+  expiryDate.setFullYear(issueDate.getFullYear() + 1);
 
   await prisma.person.update({
     where: { id: Number(id) },
@@ -346,7 +358,11 @@ export const peopleUpdate = async (req: Request, res: Response) => {
       },
       person_licenses: {
         deleteMany: {},
-        create: license_ids_nums.map(lid => ({ license_id: lid, issue_date: new Date() }))
+        create: license_ids_nums.map(lid => ({ 
+          license: { connect: { id: lid } },
+          issue_date: issueDate,
+          expiry_date: expiryDate
+        }))
       }
     },
   });
