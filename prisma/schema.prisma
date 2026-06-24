@@ -1,0 +1,320 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Airport {
+  id                    Int                @id @default(autoincrement())
+  icao                  String             @unique
+  iata                  String?            @unique
+  name                  String
+  city                  String?
+  runways               Runway[]
+  hangars               Hangar[]
+  maintenance_companies CompanyAirport[]
+  maintenance_events    MaintenanceEvent[]
+  home_airports         Aircraft[]
+
+  @@map("airports")
+}
+
+model Runway {
+  id            Int      @id @default(autoincrement())
+  airport_id    Int
+  airport       Airport  @relation(fields: [airport_id], references: [id], onDelete: Cascade)
+  designator    String
+  length_meters Int?
+  surface       String?
+  flights       Flight[]
+
+  @@unique([airport_id, designator])
+  @@map("runways")
+}
+
+model Hangar {
+  id                 Int               @id @default(autoincrement())
+  airport_id         Int
+  airport            Airport           @relation(fields: [airport_id], references: [id], onDelete: Cascade)
+  name               String
+  capacity           Int?
+  hangar_type_limits HangarTypeLimit[]
+  aircraft           Aircraft[]
+
+  @@map("hangars")
+}
+
+model HangarTypeLimit {
+  hangar_id     Int
+  hangar        Hangar       @relation(fields: [hangar_id], references: [id], onDelete: Cascade)
+  type_id       Int
+  aircraft_type AircraftType @relation(fields: [type_id], references: [id], onDelete: Cascade)
+  max_quantity  Int
+
+  @@id([hangar_id, type_id])
+  @@map("hangar_type_limits")
+}
+
+model AtcAuthority {
+  id              Int             @id @default(autoincrement())
+  name            String
+  description     String?
+  person_licenses PersonLicense[]
+
+  @@map("atc_authorities")
+}
+
+model Person {
+  id                Int                @id @default(autoincrement())
+  first_name        String
+  last_name         String
+  email             String?            @unique
+  license_number    String?
+  person_roles      PersonRole[]
+  person_licenses   PersonLicense[]
+  bookings          Booking[]
+  flights           Flight[]
+  flight_complaints FlightComplaint[]
+  pilot_logbook     PilotLogbook[]
+  maintenance_events MaintenanceEvent[]
+
+  @@map("people")
+}
+
+model Role {
+  id           Int          @id @default(autoincrement())
+  role_name    String       @unique
+  person_roles PersonRole[]
+
+  @@map("roles")
+}
+
+model PersonRole {
+  person_id Int
+  person    Person @relation(fields: [person_id], references: [id], onDelete: Cascade)
+  role_id   Int
+  role      Role   @relation(fields: [role_id], references: [id], onDelete: Cascade)
+
+  @@id([person_id, role_id])
+  @@map("person_roles")
+}
+
+model License {
+  id              Int             @id @default(autoincrement())
+  license_type    String          @unique
+  description     String?
+  person_licenses PersonLicense[]
+
+  @@map("licenses")
+}
+
+model PersonLicense {
+  id                   Int           @id @default(autoincrement())
+  person_id            Int
+  person               Person        @relation(fields: [person_id], references: [id], onDelete: Cascade)
+  license_id           Int
+  license              License       @relation(fields: [license_id], references: [id], onDelete: Cascade)
+  issue_date           DateTime
+  expiry_date          DateTime
+  rating               String?
+  issuing_authority_id Int?
+  issuing_authority    AtcAuthority? @relation(fields: [issuing_authority_id], references: [id])
+
+  @@map("person_licenses")
+}
+
+model AircraftType {
+  id                    Int                   @id @default(autoincrement())
+  manufacturer          String
+  model                 String
+  hangar_type_limits    HangarTypeLimit[]
+  aircraft              Aircraft[]
+  maintenance_intervals MaintenanceInterval[]
+
+  @@map("aircraft_types")
+}
+
+model Aircraft {
+  id                   Int                @id @default(autoincrement())
+  registration         String             @unique
+  type_id              Int
+  aircraft_type        AircraftType       @relation(fields: [type_id], references: [id], onDelete: Cascade)
+  home_airport_id      Int?
+  home_airport         Airport?           @relation(fields: [home_airport_id], references: [id], onDelete: SetNull)
+  current_hangar_id    Int?
+  current_hangar       Hangar?            @relation(fields: [current_hangar_id], references: [id], onDelete: SetNull)
+  total_flight_hours   Decimal            @default(0) @db.Decimal(10, 2)
+  manufacture_date     DateTime?
+  airworthiness_expiry DateTime?
+  status               String             @default("active")
+  created_at           DateTime           @default(now()) @db.Timestamptz
+  maintenance_events   MaintenanceEvent[]
+  bookings             Booking[]
+  flights              Flight[]
+  flight_complaints    FlightComplaint[]
+  aircraft_logbook     AircraftLogbook[]
+
+  @@map("aircraft")
+}
+
+model MaintenanceInterval {
+  id                Int               @id @default(autoincrement())
+  type_id           Int
+  aircraft_type     AircraftType      @relation(fields: [type_id], references: [id], onDelete: Cascade)
+  name              String
+  interval_hours    Int?
+  interval_days     Int?
+  description       String?
+  maintenance_tasks MaintenanceTask[]
+
+  @@map("maintenance_intervals")
+}
+
+model MaintenanceTask {
+  id                     Int                   @id @default(autoincrement())
+  interval_id            Int
+  interval               MaintenanceInterval   @relation(fields: [interval_id], references: [id], onDelete: Cascade)
+  description            String
+  is_mandatory           Boolean               @default(true)
+  maintenance_activities MaintenanceActivity[]
+
+  @@map("maintenance_tasks")
+}
+
+model MaintenanceCompany {
+  id                 Int                @id @default(autoincrement())
+  name               String
+  description        String?
+  company_airports   CompanyAirport[]
+  maintenance_events MaintenanceEvent[]
+
+  @@map("maintenance_companies")
+}
+
+model CompanyAirport {
+  company_id Int
+  company    MaintenanceCompany @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  airport_id Int
+  airport    Airport            @relation(fields: [airport_id], references: [id], onDelete: Cascade)
+
+  @@id([company_id, airport_id])
+  @@map("company_airports")
+}
+
+model MaintenanceEvent {
+  id                     Int                   @id @default(autoincrement())
+  aircraft_id            Int
+  aircraft               Aircraft              @relation(fields: [aircraft_id], references: [id], onDelete: Cascade)
+  airport_id             Int?
+  airport                Airport?              @relation(fields: [airport_id], references: [id], onDelete: SetNull)
+  company_id             Int?
+  company                MaintenanceCompany?   @relation(fields: [company_id], references: [id], onDelete: SetNull)
+  technician_id          Int?
+  technician             Person?               @relation(fields: [technician_id], references: [id], onDelete: SetNull)
+  date                   DateTime
+  hours_at_maintenance   Decimal               @db.Decimal(10, 2)
+  notes                  String?
+  created_at             DateTime              @default(now()) @db.Timestamptz
+  maintenance_activities MaintenanceActivity[]
+  bookings               Booking[]
+
+  @@map("maintenance_events")
+}
+
+model MaintenanceActivity {
+  id           Int              @id @default(autoincrement())
+  event_id     Int
+  event        MaintenanceEvent @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  task_id      Int?
+  task         MaintenanceTask? @relation(fields: [task_id], references: [id], onDelete: SetNull)
+  notes        String?
+  status       String?
+  completed_at DateTime         @default(now()) @db.Timestamptz
+
+  @@map("maintenance_activities")
+}
+
+model Booking {
+  id                   Int               @id @default(autoincrement())
+  aircraft_id          Int
+  aircraft             Aircraft          @relation(fields: [aircraft_id], references: [id], onDelete: Cascade)
+  person_id            Int
+  person               Person            @relation(fields: [person_id], references: [id], onDelete: Cascade)
+  maintenance_event_id Int?
+  maintenance_event    MaintenanceEvent? @relation(fields: [maintenance_event_id], references: [id], onDelete: SetNull)
+  start_time           DateTime          @db.Timestamptz
+  end_time             DateTime          @db.Timestamptz
+  status               String?
+  remarks              String?
+  created_at           DateTime          @default(now()) @db.Timestamptz
+  flights              Flight[]
+
+  @@map("bookings")
+}
+
+model Flight {
+  id                Int               @id @default(autoincrement())
+  booking_id        Int?
+  booking           Booking?          @relation(fields: [booking_id], references: [id], onDelete: SetNull)
+  aircraft_id       Int
+  aircraft          Aircraft          @relation(fields: [aircraft_id], references: [id], onDelete: Cascade)
+  pilot_id          Int?
+  pilot             Person?           @relation(fields: [pilot_id], references: [id], onDelete: SetNull)
+  runway_id         Int?
+  runway            Runway?           @relation(fields: [runway_id], references: [id], onDelete: SetNull)
+  flight_number     String?
+  departure_time    DateTime?         @db.Timestamptz
+  arrival_time      DateTime?         @db.Timestamptz
+  flight_type       String?
+  flight_complaints FlightComplaint[]
+  pilot_logbook     PilotLogbook[]
+  aircraft_logbook  AircraftLogbook[]
+
+  @@map("flights")
+}
+
+model FlightComplaint {
+  id          Int      @id @default(autoincrement())
+  flight_id   Int?
+  flight      Flight?  @relation(fields: [flight_id], references: [id], onDelete: Cascade)
+  aircraft_id Int
+  aircraft    Aircraft @relation(fields: [aircraft_id], references: [id], onDelete: Cascade)
+  reporter_id Int?
+  reporter    Person?  @relation(fields: [reporter_id], references: [id], onDelete: SetNull)
+  description String
+  severity    String?
+  reported_at DateTime @default(now()) @db.Timestamptz
+
+  @@map("flight_complaints")
+}
+
+model PilotLogbook {
+  id               Int      @id @default(autoincrement())
+  pilot_id         Int
+  pilot            Person   @relation(fields: [pilot_id], references: [id], onDelete: Cascade)
+  flight_id        Int?
+  flight           Flight?  @relation(fields: [flight_id], references: [id], onDelete: Cascade)
+  flight_date      DateTime
+  duration_minutes Int
+  cumulative_hours Decimal  @db.Decimal(10, 2)
+  remarks          String?
+
+  @@map("pilot_logbook")
+}
+
+model AircraftLogbook {
+  id               Int      @id @default(autoincrement())
+  aircraft_id      Int
+  aircraft         Aircraft @relation(fields: [aircraft_id], references: [id], onDelete: Cascade)
+  flight_id        Int?
+  flight           Flight?  @relation(fields: [flight_id], references: [id], onDelete: Cascade)
+  flight_date      DateTime
+  duration_minutes Int
+  cumulative_hours Decimal  @db.Decimal(10, 2)
+  remarks          String?
+
+  @@map("aircraft_logbook")
+}
