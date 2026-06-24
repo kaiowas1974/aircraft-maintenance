@@ -36,6 +36,21 @@ services:
       - aircraft-net
     command: migrate
 
+  ui:
+    build: .
+    container_name: aircraft-ui
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: "postgresql://user:password@db:5432/aircraft_maintenance"
+    depends_on:
+      db:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    networks:
+      - aircraft-net
+
 networks:
   aircraft-net:
     driver: bridge
