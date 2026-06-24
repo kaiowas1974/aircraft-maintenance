@@ -29,6 +29,12 @@ If you already have the database and migrations running in Docker and want to wo
 The application will be available at:
 **[http://localhost:3000](http://localhost:3000)**
 
+## 🌐 Navigation & Overview
+
+The main overview page, which provides access to all management modules (Airports, Hangars, Aircraft Types, Aircraft, and Personnel), is available at the root URL:
+
+**[http://localhost:3000/](http://localhost:3000/)**
+
 ---
 
 ## 🛑 Stopping the System
