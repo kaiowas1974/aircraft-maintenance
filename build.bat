@@ -2,7 +2,7 @@
 setlocal
 echo Starting aircraft maintenance database stack...
 
-docker compose up -d
+docker compose up -d --build
 
 if %ERRORLEVEL% NEQ 0 (
     echo.

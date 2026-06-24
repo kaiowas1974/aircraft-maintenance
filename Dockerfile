@@ -13,6 +13,7 @@ RUN npx prisma generate
 
 COPY . .
 RUN npm run build
+RUN rm -rf dist/views && cp -r src/views dist/views
 
 # Production stage
 FROM node:20-alpine
