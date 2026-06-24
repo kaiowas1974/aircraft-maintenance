@@ -16,14 +16,6 @@ router.post('/airports', uiControllers.airportsCreate);
 router.post('/airports/:id', uiControllers.airportsUpdate);
 router.post('/airports/:id/delete', uiControllers.airportsDelete);
 
-// Hangars
-router.get('/hangars', uiControllers.hangarsList);
-router.get('/hangars/new', uiControllers.hangarsNew);
-router.get('/hangars/:id/edit', uiControllers.hangarsEdit);
-router.post('/hangars', uiControllers.hangarsCreate);
-router.post('/hangars/:id', uiControllers.hangarsUpdate);
-router.post('/hangars/:id/delete', uiControllers.hangarsDelete);
-
 // Aircraft Types
 router.get('/aircraft-types', uiControllers.aircraftTypesList);
 router.get('/aircraft-types/new', uiControllers.aircraftTypesNew);

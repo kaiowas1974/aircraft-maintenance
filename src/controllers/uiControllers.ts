@@ -8,34 +8,39 @@ export const home = async (req: Request, res: Response) => {
 // Airports
 export const airportsList = async (req: Request, res: Response) => {
   const airports = await prisma.airport.findMany({
-    include: { runways: true }
+    include: { runways: true, hangars: true }
   });
   res.render('airports/index', { airports });
 };
 
 export const airportsNew = async (req: Request, res: Response) => {
-  res.render('airports/form', { airport: null, runways: [] });
+  res.render('airports/form', { airport: null, runways: [], hangars: [] });
 };
 
 export const airportsEdit = async (req: Request, res: Response) => {
   const { id } = req.params;
   const airport = await prisma.airport.findUnique({
     where: { id: Number(id) },
-    include: { runways: true }
+    include: { runways: true, hangars: true }
   });
   if (!airport) {
     return res.status(404).send('Airport not found');
   }
-  res.render('airports/form', { airport, runways: airport.runways });
+  res.render('airports/form', { airport, runways: airport.runways, hangars: airport.hangars });
 };
 
 export const airportsCreate = async (req: Request, res: Response) => {
-  const { icao, iata, name, city, runways } = req.body;
+  const { icao, iata, name, city, runways, hangars } = req.body;
   
   const runwayData = runways ? (Array.isArray(runways) ? runways : [runways]).map((r: any) => ({
     designator: r.designator,
     length_meters: r.length_meters ? Number(r.length_meters) : null,
     surface: r.surface,
+  })) : [];
+
+  const hangarData = hangars ? (Array.isArray(hangars) ? hangars : [hangars]).map((h: any) => ({
+    name: h.name,
+    capacity: h.capacity ? Number(h.capacity) : null,
   })) : [];
 
   await prisma.airport.create({
@@ -46,6 +51,9 @@ export const airportsCreate = async (req: Request, res: Response) => {
       city,
       runways: {
         create: runwayData
+      },
+      hangars: {
+        create: hangarData
       }
     },
   });
@@ -54,12 +62,17 @@ export const airportsCreate = async (req: Request, res: Response) => {
 
 export const airportsUpdate = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { icao, iata, name, city, runways } = req.body;
+  const { icao, iata, name, city, runways, hangars } = req.body;
   
   const runwayData = runways ? (Array.isArray(runways) ? runways : [runways]).map((r: any) => ({
     designator: r.designator,
     length_meters: r.length_meters ? Number(r.length_meters) : null,
     surface: r.surface,
+  })) : [];
+
+  const hangarData = hangars ? (Array.isArray(hangars) ? hangars : [hangars]).map((h: any) => ({
+    name: h.name,
+    capacity: h.capacity ? Number(h.capacity) : null,
   })) : [];
 
   await prisma.airport.update({
@@ -72,6 +85,10 @@ export const airportsUpdate = async (req: Request, res: Response) => {
       runways: {
         deleteMany: {},
         create: runwayData
+      },
+      hangars: {
+        deleteMany: {},
+        create: hangarData
       }
     },
   });

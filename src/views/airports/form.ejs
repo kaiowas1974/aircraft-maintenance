@@ -49,50 +49,96 @@
     </div>
     <button type="button" id="add-runway" class="btn btn-secondary mt-2">Add Runway</button>
 
+    <h3 class="mt-4">Hangars</h3>
+    <div id="hangar-list">
+        <% if (typeof hangars !== 'undefined') { %>
+            <% hangars.forEach((hangar, index) => { %>
+                <div class="card mb-2 hangar-item">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" name="hangars[<%= index %>][name]" value="<%= hangar.name %>" required>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label">Capacity</label>
+                                <input type="number" class="form-control" name="hangars[<%= index %>][capacity]" value="<%= hangar.capacity || '' %>">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger remove-hangar">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+    <button type="button" id="add-hangar" class="btn btn-secondary mt-2">Add Hangar</button>
+
     <hr class="my-4">
     <button type="submit" class="btn btn-success">Save</button>
     <a href="/airports" class="btn btn-secondary">Cancel</a>
 </form>
 
 <script>
-    document.getElementById('add-runway').addEventListener('click', function() {
-        const list = document.getElementById('runway-list');
-        const index = list.children.length;
-        const div = document.createElement('div');
-        div.className = 'card mb-2 runway-item';
-        div.innerHTML = `
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3">
-                        <label class="form-label">Designator</label>
-                        <input type="text" class="form-control" name="runways[${index}][designator]" required>
+    function setupDynamicList(listId, addButtonId, itemClass, reindexFunc) {
+        const list = document.getElementById(listId);
+        const addButton = document.getElementById(addButtonId);
+        
+        addButton.addEventListener('click', function() {
+            const index = list.children.length;
+            const div = document.createElement('div');
+            div.className = `card mb-2 ${itemClass}`;
+            
+            if (listId === 'runway-list') {
+                div.innerHTML = `
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Designator</label>
+                                <input type="text" class="form-control" name="runways[${index}][designator]" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Length (m)</label>
+                                <input type="number" class="form-control" name="runways[${index}][length_meters]">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Surface</label>
+                                <input type="text" class="form-control" name="runways[${index}][surface]">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger remove-item">Remove</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Length (m)</label>
-                        <input type="number" class="form-control" name="runways[${index}][length_meters]">
+                `;
+            } else if (listId === 'hangar-list') {
+                div.innerHTML = `
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" name="hangars[${index}][name]" required>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label">Capacity</label>
+                                <input type="number" class="form-control" name="hangars[${index}][capacity]">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger remove-item">Remove</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Surface</label>
-                        <input type="text" class="form-control" name="runways[${index}][surface]">
-                    </div>
-                    <div class="col-md-3 d-flex align-items-end">
-                        <button type="button" class="btn btn-danger remove-runway">Remove</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        list.appendChild(div);
-
-        div.querySelector('.remove-runway').addEventListener('click', function() {
-            div.remove();
-            // Note: this simple implementation might have issues with array indices if we remove from middle.
-            // But for simplicity in this prototype, let's just re-index or accept it.
-            // Actually, if we use indexed names like runways[0][...], removing an element in the middle will break it.
-            // A better way is to use a flat structure or a different naming convention.
-            // Let's just re-index all runway inputs after removal.
-            reindexRunways();
+                `;
+            }
+            
+            list.appendChild(div);
+            div.querySelector('.remove-item').addEventListener('click', function() {
+                div.remove();
+                reindexFunc();
+            });
         });
-    });
+    }
 
     function reindexRunways() {
         const items = document.querySelectorAll('.runway-item');
@@ -105,11 +151,29 @@
         });
     }
 
-    document.addEventListener('click', function(e) {
-        if (e.target && e.target.classList.contains('remove-runway')) {
-            e.target.closest('.runway-item').remove();
-            reindexRunways();
-        }
+    function reindexHangars() {
+        const items = document.querySelectorAll('.hangar-item');
+        items.forEach((item, index) => {
+            item.querySelectorAll('input').forEach(input => {
+                const name = input.name;
+                const newName = name.replace(/hangars\[\d+\]/, `hangars[${index}]`);
+                input.name = newName;
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setupDynamicList('runway-list', 'add-runway', 'runway-item', reindexRunways);
+        setupDynamicList('hangar-list', 'add-hangar', 'hangar-item', reindexHangars);
+
+        // Handle existing remove buttons
+        document.querySelectorAll('.remove-runway, .remove-hangar').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.card').remove();
+                if (this.closest('.runway-item')) reindexRunways();
+                if (this.closest('.hangar-item')) reindexHangars();
+            });
+        });
     });
 </script>
 

@@ -12,6 +12,7 @@
             <th>Name</th>
             <th>City</th>
             <th>Runways</th>
+            <th>Hangars</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -26,6 +27,13 @@
                 <ul class="list-unstyled mb-0">
                     <% airport.runways.forEach(runway => { %>
                         <li><%= runway.designator %> (<%= runway.length_meters %>m)</li>
+                    <% }) %>
+                </ul>
+            </td>
+            <td>
+                <ul class="list-unstyled mb-0">
+                    <% airport.hangars.forEach(hangar => { %>
+                        <li><%= hangar.name %> (<%= hangar.capacity %>)</li>
                     <% }) %>
                 </ul>
             </td>
