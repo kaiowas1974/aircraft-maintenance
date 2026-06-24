@@ -21,9 +21,12 @@
             <td><%= airport.iata %></td>
             <td><%= airport.name %></td>
             <td><%= airport.city %></td>
-            <td>
-                <a href="/airports/<%= airport.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
-            </td>
+                <td class="d-flex gap-2">
+                    <a href="/airports/<%= airport.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="/airports/<%= airport.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
         </tr>
         <% }) %>
     </tbody>

@@ -19,9 +19,12 @@
             <td><%= hangar.name %></td>
             <td><%= hangar.airport ? hangar.airport.name : '' %></td>
             <td><%= hangar.capacity || 0 %></td>
-            <td>
-                <a href="/hangars/<%= hangar.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
-            </td>
+                <td class="d-flex gap-2">
+                    <a href="/hangars/<%= hangar.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="/hangars/<%= hangar.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
         </tr>
         <% }) %>
     </tbody>

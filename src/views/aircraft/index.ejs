@@ -25,9 +25,12 @@
             <td><%= ac.current_hangar ? ac.current_hangar.name : '' %></td>
             <td><%= ac.total_flight_hours %></td>
             <td><%= ac.status %></td>
-            <td>
-                <a href="/aircraft/<%= ac.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
-            </td>
+                <td class="d-flex gap-2">
+                    <a href="/aircraft/<%= ac.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="/aircraft/<%= ac.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
         </tr>
         <% }) %>
     </tbody>

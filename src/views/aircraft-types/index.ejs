@@ -17,9 +17,12 @@
         <tr>
             <td><%= type.manufacturer %></td>
             <td><%= type.model %></td>
-            <td>
-                <a href="/aircraft-types/<%= type.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
-            </td>
+                <td class="d-flex gap-2">
+                    <a href="/aircraft-types/<%= type.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="/aircraft-types/<%= type.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
         </tr>
         <% }) %>
     </tbody>

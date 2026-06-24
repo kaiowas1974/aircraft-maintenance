@@ -21,9 +21,12 @@
             <td><%= person.last_name %></td>
             <td><%= person.email || '' %></td>
             <td><%= person.license_number || '' %></td>
-            <td>
-                <a href="/people/<%= person.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
-            </td>
+                <td class="d-flex gap-2">
+                    <a href="/people/<%= person.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="/people/<%= person.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
         </tr>
         <% }) %>
     </tbody>
