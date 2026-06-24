@@ -31,7 +31,7 @@ The application will be available at:
 
 ## 🌐 Navigation & Overview
 
-The main overview page, which provides access to all management modules (Airports, Hangars, Aircraft Types, Aircraft, and Personnel), is available at the root URL:
+The main overview page, which provides access to all management modules (Airports, Hangars, Aircraft Types, Aircraft, People, Licenses, and Roles), is available at the root URL:
 
 **[http://localhost:3000/](http://localhost:3000/)**
 

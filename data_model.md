@@ -47,8 +47,6 @@ This document provides a detailed overview of the database schema and the functi
 | **Booking** | `aircraft_id`, `person_id`, `maintenance_event_id`, `start_time`, `end_time`, `status` |
 | **Flight** | `booking_id`, `aircraft_id`, `pilot_id`, `runway_id`, `departure_time`, `arrival_time`, `flight_type` |
 | **Flight Complaint** | `flight_id`, `aircraft_id`, `reporter_id`, `description`, `severity` |
-| **Flight Logbook (Pilot)** | `pilot_id`, `flight_id`, `flight_date`, `duration_minutes`, `cumulative_hours` |
-| **Flight Logbook (Aircraft)** | `aircraft_id`, `flight_id`, `flight_date`, `duration_minutes`, `cumulative_hours` |
 | **Hangar** | `name`, `capacity` |
 | **Hangar Type Limit** | `max_quantity` |
 | **License** | `license_type`, `description` |
@@ -59,6 +57,9 @@ This document provides a detailed overview of the database schema and the functi
 | **Maintenance Task** | `description`, `is_mandatory` |
 | **Person** | `first_name`, `last_name`, `email`, `license_number` |
 | **Person License** | `issue_date`, `expiry_date`, `rating` |
+| **Person Role** | `person_id`, `role_id` |
 | **Pilot Logbook** | `pilot_id`, `flight_id`, `flight_date`, `duration_minutes`, `cumulative_hours` |
+| **Aircraft Logbook** | `aircraft_id`, `flight_id`, `flight_date`, `duration_minutes`, `cumulative_hours` |
 | **Role** | `role_name` |
 | **Runway** | `designator`, `length_meters`, `surface` |
+
