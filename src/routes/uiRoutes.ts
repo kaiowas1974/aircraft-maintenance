@@ -3,6 +3,7 @@ import * as uiControllers from '../controllers/uiControllers';
 import licenseUiRoutes from './licenseUiRoutes';
 import roleUiRoutes from './roleUiRoutes';
 import atcAuthorityUiRoutes from './atcAuthorityUiRoutes';
+import bookingUiRoutes from './bookingUiRoutes';
 
 const router = Router();
 
@@ -48,5 +49,8 @@ router.use('/roles', roleUiRoutes);
 
 // ATC Authorities
 router.use('/atc-authorities', atcAuthorityUiRoutes);
+
+// Bookings
+router.use('/bookings', bookingUiRoutes);
 
 export default router;
