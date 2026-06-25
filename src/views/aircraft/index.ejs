@@ -1,8 +1,5 @@
 <%- include('../header') %>
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>Aircraft</h1>
-    <a href="/aircraft/new" class="btn btn-primary">Add New</a>
-</div>
+<h1>Aircraft</h1>
 
 <table class="table table-striped">
     <thead>
@@ -10,28 +7,25 @@
             <th>Registration</th>
             <th>Type</th>
             <th>Home Airport</th>
-            <th>Current Hangar</th>
-            <th>Flight Hours</th>
+            <th>Hangar</th>
             <th>Status</th>
+            <th>Club Aircraft</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         <% aircraft.forEach(ac => { %>
-        <tr>
-            <td><%= ac.registration %></td>
-            <td><%= ac.aircraft_type ? ac.aircraft_type.manufacturer + ' ' + ac.aircraft_type.model : '' %></td>
-            <td><%= ac.home_airport ? ac.home_airport.name : '' %></td>
-            <td><%= ac.current_hangar ? ac.current_hangar.name : '' %></td>
-            <td><%= ac.total_flight_hours %></td>
-            <td><%= ac.status %></td>
-                <td class="d-flex gap-2">
+            <tr>
+                <td><%= ac.registration %></td>
+                <td><%= ac.aircraft_type.manufacturer %> <%= ac.aircraft_type.model %></td>
+                <td><%= ac.home_airport ? ac.home_airport.name : '' %></td>
+                <td><%= ac.current_hangar ? ac.current_hangar.name : '' %></td>
+                <td><%= ac.status %></td>
+                <td><%= ac.is_club_aircraft ? 'Yes' : 'No' %></td>
+                <td>
                     <a href="/aircraft/<%= ac.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
-                    <form action="/aircraft/<%= ac.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
-                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                    </form>
                 </td>
-        </tr>
+            </tr>
         <% }) %>
     </tbody>
 </table>

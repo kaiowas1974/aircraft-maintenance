@@ -90,6 +90,7 @@ CREATE TABLE aircraft (
     manufacture_date DATE,
     airworthiness_expiry DATE,
     status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'unclear', 'grounded')), -- Added for flight complaints
+    is_club_aircraft BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

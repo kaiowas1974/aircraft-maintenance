@@ -72,6 +72,9 @@
     .sidebar-item:hover {
         background-color: #e9ecef;
     }
+    .sidebar-item.selected {
+        background-color: #cfe2ff;
+    }
     #events-layer {
         position: absolute;
         top: 0;
@@ -183,6 +186,7 @@
     const grid = document.getElementById('calendar-grid');
     const eventsLayer = document.getElementById('events-layer');
     const dateDisplay = document.getElementById('current-date-display');
+    const aircraftSelect = document.getElementById('aircraft_id');
 
     function initGrid() {
         grid.innerHTML = '';
@@ -279,6 +283,17 @@
         currentDate = new Date();
         currentDate.setHours(0,0,0,0);
         updateDisplay();
+    });
+
+    // Aircraft Selection from Sidebar
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('selected'));
+            this.classList.add('selected');
+            
+            const aircraftId = this.dataset.id;
+            aircraftSelect.value = aircraftId;
+        });
     });
 
     document.getElementById('booking-form').addEventListener('submit', async (e) => {

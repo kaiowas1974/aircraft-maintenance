@@ -258,6 +258,7 @@ export const aircraftCreate = async (req: Request, res: Response) => {
     manufacture_date,
     airworthiness_expiry,
     status,
+    is_club_aircraft,
   } = req.body;
   await prisma.aircraft.create({
     data: {
@@ -269,6 +270,7 @@ export const aircraftCreate = async (req: Request, res: Response) => {
       manufacture_date: manufacture_date ? new Date(manufacture_date) : null,
       airworthiness_expiry: airworthiness_expiry ? new Date(airworthiness_expiry) : null,
       status,
+      is_club_aircraft: is_club_aircraft === 'true' || is_club_aircraft === true,
     },
   });
   res.redirect('/aircraft');
@@ -285,6 +287,7 @@ export const aircraftUpdate = async (req: Request, res: Response) => {
     manufacture_date,
     airworthiness_expiry,
     status,
+    is_club_aircraft,
   } = req.body;
   await prisma.aircraft.update({
     where: { id: Number(id) },
@@ -297,6 +300,7 @@ export const aircraftUpdate = async (req: Request, res: Response) => {
       manufacture_date: manufacture_date ? new Date(manufacture_date) : null,
       airworthiness_expiry: airworthiness_expiry ? new Date(airworthiness_expiry) : null,
       status,
+      is_club_aircraft: is_club_aircraft === 'true' || is_club_aircraft === true,
     },
   });
   res.redirect('/aircraft');

@@ -76,11 +76,11 @@ INSERT INTO hangar_type_limits (hangar_id, type_id, max_quantity) VALUES
 (3, 1, 1);
 
 -- 12. Aircraft
-INSERT INTO aircraft (registration, type_id, home_airport_id, current_hangar_id, total_flight_hours, manufacture_date, airworthiness_expiry, status) VALUES 
-('OE-DABC', 1, 1, 1, 450.2, '2020-06-15', '2027-06-15', 'unclear'), 
-('OE-DAEF', 2, 2, 3, 1120.8, '2018-03-10', '2026-12-31', 'active'),
-('OE-SXYZ', 3, 3, NULL, 2500.5, '2010-11-20', '2027-01-10', 'active'),
-('OE-R123', 4, 4, NULL, 840.0, '2015-08-05', '2026-09-20', 'active');
+INSERT INTO aircraft (registration, type_id, home_airport_id, current_hangar_id, total_flight_hours, manufacture_date, airworthiness_expiry, status, is_club_aircraft) VALUES 
+('OE-DABC', 1, 1, 1, 450.2, '2020-06-15', '2027-06-15', 'unclear', true), 
+('OE-DAEF', 2, 2, 3, 1120.8, '2018-03-10', '2026-12-31', 'active', false),
+('OE-SXYZ', 3, 3, NULL, 2500.5, '2010-11-20', '2027-01-10', 'active', true),
+('OE-R123', 4, 4, NULL, 840.0, '2015-08-05', '2026-09-20', 'active', false);
 
 -- 13. Maintenance Companies
 INSERT INTO maintenance_companies (name, description) VALUES 

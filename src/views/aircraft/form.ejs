@@ -55,6 +55,10 @@
         <label for="status" class="form-label">Status</label>
         <input type="text" class="form-control" id="status" name="status" value="<%= aircraft ? aircraft.status : 'active' %>">
     </div>
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="is_club_aircraft" name="is_club_aircraft" value="true" <%= aircraft && aircraft.is_club_aircraft ? 'checked' : '' %>>
+        <label class="form-check-label" for="is_club_aircraft">Vereinsflugzeug</label>
+    </div>
     <button type="submit" class="btn btn-success">Save</button>
     <a href="/aircraft" class="btn btn-secondary">Cancel</a>
 </form>

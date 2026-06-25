@@ -3,7 +3,7 @@ import prisma from '../lib/prisma';
 
 export const getBookingsPage = async (req: Request, res: Response) => {
   const vereinsflugzeuge = await prisma.aircraft.findMany({
-    where: { status: 'vereinsflugzeug' },
+    where: { is_club_aircraft: true },
     include: { aircraft_type: true }
   });
 
