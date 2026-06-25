@@ -5,12 +5,6 @@
         height: calc(100vh - 120px);
         border: 1px solid #dee2e6;
     }
-    .booking-sidebar {
-        width: 250px;
-        border-right: 1px solid #dee2e6;
-        overflow-y: auto;
-        background-color: #f8f9fa;
-    }
     .booking-main {
         flex-grow: 1;
         display: flex;
@@ -34,7 +28,7 @@
     }
     .calendar-grid {
         display: grid;
-        grid-template-columns: 100px repeat(24, minmax(60px, 1fr));
+        grid-template-columns: 250px repeat(24, minmax(60px, 1fr));
         grid-template-rows: 30px repeat(24, 40px);
         width: max-content;
     }
@@ -49,11 +43,12 @@
         top: 0;
         z-index: 20;
     }
-    .time-label {
+    .aircraft-label {
         background-color: #e9ecef;
-        text-align: center;
-        font-size: 0.8rem;
-        line-height: 40px;
+        text-align: left;
+        padding-left: 10px;
+        font-size: 0.85rem;
+        font-weight: bold;
         border-right: 1px solid #dee2e6;
         border-bottom: 1px solid #dee2e6;
         position: sticky;
@@ -63,17 +58,6 @@
     .grid-cell {
         border-right: 1px solid #eee;
         border-bottom: 1px solid #eee;
-    }
-    .sidebar-item {
-        padding: 10px;
-        border-bottom: 1px solid #dee2e6;
-        cursor: pointer;
-    }
-    .sidebar-item:hover {
-        background-color: #e9ecef;
-    }
-    .sidebar-item.selected {
-        background-color: #cfe2ff;
     }
     #events-layer {
         position: absolute;
@@ -98,18 +82,6 @@
 <h1>Bookings</h1>
 
 <div class="booking-container">
-    <div class="booking-sidebar">
-        <div class="p-2 fw-bold border-bottom">Vereinsflugzeuge</div>
-        <div id="aircraft-list">
-            <% vereinsflugzeuge.forEach(ac => { %>
-                <div class="sidebar-item" data-id="<%= ac.id %>" data-reg="<%= ac.registration %>">
-                    <%= ac.registration %> <br>
-                    <small class="text-muted"><%= ac.aircraft_type.model %></small>
-                </div>
-            <% }) %>
-        </div>
-    </div>
-
     <div class="booking-main">
         <div class="calendar-header">
             <div>
@@ -180,6 +152,7 @@
 </div>
 
 <script>
+    const vereinsflugzeuge = <%- JSON.stringify(vereinsflugzeuge) %>;
     let currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
 
@@ -205,21 +178,20 @@
             grid.appendChild(header);
         }
 
-        // Rows for each hour
-        for (let hour = 0; hour < 24; hour++) {
-            // Time label column
+        // Rows for aircraft
+        vereinsflugzeuge.forEach(ac => {
             const label = document.createElement('div');
-            label.className = 'time-label';
-            label.textContent = `${hour}:00`;
+            label.className = 'aircraft-label';
+            label.textContent = ac.registration;
             grid.appendChild(label);
 
             // Hour cells
-            for (let col = 1; col <= 24; col++) {
+            for (let hour = 0; hour < 24; hour++) {
                 const cell = document.createElement('div');
                 cell.className = 'grid-cell';
                 grid.appendChild(cell);
             }
-        }
+        });
     }
 
     async function fetchBookings() {
@@ -241,6 +213,9 @@
             
             if (start.toDateString() !== currentDate.toDateString()) return;
 
+            const aircraftIndex = vereinsflugzeuge.findIndex(ac => ac.id === booking.aircraft.id);
+            if (aircraftIndex === -1) return;
+
             const startHour = start.getHours();
             const startMin = start.getMinutes();
             const durationHours = (end - start) / (1000 * 60 * 60);
@@ -249,8 +224,8 @@
             event.className = 'booking-event';
             event.textContent = `${booking.aircraft.registration} - ${booking.person.last_name}`;
             
-            const top = 30 + (startHour * 40) + (startMin / 60 * 40);
-            const left = 100 + (startMin / 60 * 60);
+            const top = 30 + (aircraftIndex * 40) + (startMin / 60 * 40);
+            const left = 250 + (startMin / 60 * 60);
             const width = durationHours * 60;
             const height = Math.max(durationHours * 40, 25);
 
@@ -283,17 +258,6 @@
         currentDate = new Date();
         currentDate.setHours(0,0,0,0);
         updateDisplay();
-    });
-
-    // Aircraft Selection from Sidebar
-    document.querySelectorAll('.sidebar-item').forEach(item => {
-        item.addEventListener('click', function() {
-            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('selected'));
-            this.classList.add('selected');
-            
-            const aircraftId = this.dataset.id;
-            aircraftSelect.value = aircraftId;
-        });
     });
 
     document.getElementById('booking-form').addEventListener('submit', async (e) => {
