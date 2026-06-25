@@ -225,7 +225,7 @@
             event.textContent = `${booking.person.first_name} ${booking.person.last_name}`;
             
             const top = 30 + (aircraftIndex * 40) + (startMin / 60 * 40);
-            const left = 250 + (startMin / 60 * 60);
+            const left = 250 + (startHour * 60) + (startMin / 60 * 60);
             const width = durationHours * 60;
             const height = 25;
 
