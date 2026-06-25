@@ -216,8 +216,8 @@
             const aircraftIndex = vereinsflugzeuge.findIndex(ac => ac.id === booking.aircraft.id);
             if (aircraftIndex === -1) return;
 
-            const startHour = start.getHours();
-            const startMin = start.getMinutes();
+            const startHour = start.getUTCHours();
+            const startMin = start.getUTCMinutes();
             const durationHours = (end - start) / (1000 * 60 * 60);
 
             const event = document.createElement('div');
