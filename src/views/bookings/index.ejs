@@ -222,12 +222,12 @@
 
             const event = document.createElement('div');
             event.className = 'booking-event';
-            event.textContent = `${booking.aircraft.registration} - ${booking.person.last_name}`;
+            event.textContent = `${booking.person.first_name} ${booking.person.last_name}`;
             
             const top = 30 + (aircraftIndex * 40) + (startMin / 60 * 40);
             const left = 250 + (startMin / 60 * 60);
             const width = durationHours * 60;
-            const height = Math.max(durationHours * 40, 25);
+            const height = 25;
 
             event.style.top = `${top}px`;
             event.style.left = `${left}px`;
